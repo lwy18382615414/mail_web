@@ -140,11 +140,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { getEnterpriseAccounts } from '@/api/account'
+import type { EnterpriseAccount } from '@/types/account'
 import SecurityVerificationDialog from './SecurityVerificationDialog.vue'
-import EnterpriseSelectionDialog, { type EnterpriseAccount } from './EnterpriseSelectionDialog.vue'
+import EnterpriseSelectionDialog from './EnterpriseSelectionDialog.vue'
 
 const router = useRouter()
 const { t, locale } = useI18n()
@@ -162,22 +164,15 @@ const securityDialogVisible = ref(false)
 const enterpriseDialogVisible = ref(false)
 let timer: ReturnType<typeof setInterval> | null = null
 
-const enterpriseAccounts: EnterpriseAccount[] = [
-  {
-    id: 'techcorp-main',
-    email: 'zhouqin@techcorp.com',
-    company: 'tech科技有限公司',
-    avatarText: 'Hn',
-    avatarColor: '#2563eb',
-  },
-  {
-    id: 'techcorp-secondary',
-    email: 'zhouqin@techcorp.com',
-    company: 'tech科技有限公司',
-    avatarText: 'Hn',
-    avatarColor: '#ff9900',
-  },
-]
+const enterpriseAccounts = ref<EnterpriseAccount[]>([])
+
+onMounted(async () => {
+  try {
+    enterpriseAccounts.value = await getEnterpriseAccounts()
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : t('login.enterpriseLoadFailed'))
+  }
+})
 
 function handleSendCode() {
   if (!account.value) {

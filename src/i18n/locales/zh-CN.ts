@@ -39,6 +39,7 @@ export default {
     accountRequired: '请输入账号',
     passwordRequired: '请输入密码',
     agreeRequired: '请先阅读并同意用户协议和隐私政策',
+    enterpriseLoadFailed: '企业账号加载失败',
     loginSuccess: '登录成功',
     securityDialog: {
       title: '账号安全验证',
@@ -172,9 +173,15 @@ export default {
       decline: '不发送',
       send: '发送',
     },
+    load: {
+      accountFailed: '账号信息加载失败',
+      listFailed: '邮件列表加载失败',
+      detailFailed: '邮件详情加载失败',
+    },
     empty: {
       title: '请选择邮件',
       description: '从列表中选择一封邮件后可在此阅读。',
+      list: '暂无邮件',
     },
   },
   languages: {

@@ -39,6 +39,7 @@ export default {
     accountRequired: 'Please enter your account',
     passwordRequired: 'Please enter your password',
     agreeRequired: 'Please accept the User Agreement and Privacy Policy first',
+    enterpriseLoadFailed: 'Failed to load enterprise accounts',
     loginSuccess: 'Login successful',
     securityDialog: {
       title: 'Account Security Verification',
@@ -172,9 +173,15 @@ export default {
       decline: "Don't Send",
       send: 'Send',
     },
+    load: {
+      accountFailed: 'Failed to load account information',
+      listFailed: 'Failed to load messages',
+      detailFailed: 'Failed to load message details',
+    },
     empty: {
       title: 'Select a message',
       description: 'Choose an email from the list to read it here.',
+      list: 'No messages',
     },
   },
   languages: {

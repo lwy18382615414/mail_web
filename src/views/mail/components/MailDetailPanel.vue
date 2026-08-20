@@ -1,6 +1,6 @@
 <template>
-  <main class="mail-detail">
-    <header v-if="mail" class="detail-toolbar">
+  <main v-loading="loading" class="mail-detail">
+    <header v-if="mail && !error" class="detail-toolbar">
       <div class="toolbar-group">
         <template v-for="action in toolbarActions" :key="action.key">
           <i v-if="action.dividerBefore" class="toolbar-divider" aria-hidden="true"></i>
@@ -20,7 +20,7 @@
       </button>
     </header>
 
-    <article v-if="mail" class="message">
+    <article v-if="mail && !error" class="message">
       <header class="message-title">
         <div>
           <h2>{{ mail.subject }}</h2>
@@ -63,51 +63,14 @@
       </section>
 
       <section class="message-body">
-        <p><strong>Dear friends,</strong></p>
-        <p>
-          I am highly excited to announce that my personal contemporary art exhibition
-          <strong>"Boundaries and Flow"</strong> will officially open next Saturday!
-        </p>
-        <p>
-          This exhibition will feature 24 artworks created over the past two years, covering a
-          diverse range of mediums including oil paintings, installation art, and digital media. The
-          exhibition attempts to deeply explore the intricate relationship between body, space, and
-          memory.
-        </p>
-
-        <ul class="event-details">
-          <li>
-            <span class="detail-icon blue"><SvgIcon name="mail-clock" :size="18" /></span
-            ><strong>Opening Time:</strong> June 28 (Saturday) 15:00
-          </li>
-          <li>
-            <span class="detail-icon red"><SvgIcon name="mail-location" :size="18" /></span
-            ><strong>Location:</strong> ArtSpace Gallery, 188 Binjiang Road
-          </li>
-          <li>
-            <span class="detail-icon violet"><SvgIcon name="mail-glass" :size="18" /></span
-            ><strong>Details:</strong> Refreshments and light drinks will be provided on-site
-          </li>
-        </ul>
-
-        <p>
-          You are cordially invited to attend the exhibition, and you are more than welcome to bring
-          friends along. Please reply to this email to confirm your attendance, so that we can
-          prepare accordingly.
-        </p>
-        <p>Looking forward to meeting you in the art!</p>
-        <div class="signature">
-          <strong>Best regards,</strong>
-          <b>{{ mail.sender }}</b>
-          <span>Independent Artist · ArtSpace</span>
-        </div>
+        <p v-for="paragraph in mail.paragraphs" :key="paragraph">{{ paragraph }}</p>
       </section>
     </article>
 
     <section v-else class="empty-detail">
       <SvgIcon name="mail-inbox" :size="44" />
-      <h2>{{ t('mail.empty.title') }}</h2>
-      <p>{{ t('mail.empty.description') }}</p>
+      <h2>{{ error ? t('mail.load.detailFailed') : t('mail.empty.title') }}</h2>
+      <p>{{ error || t('mail.empty.description') }}</p>
     </section>
   </main>
 </template>
@@ -115,13 +78,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Mail, MailboxType } from '@/types/mail'
+import type { MailDetail, MailboxType } from '@/types/mail'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  mail?: Mail
+  mail?: MailDetail
   mailbox: MailboxType
+  loading?: boolean
+  error?: string
 }>()
 
 type ToolbarAction = {
@@ -399,70 +364,6 @@ const toolbarActions = computed<ToolbarAction[]>(() => {
 
 .message-body p {
   margin: 0 0 8px;
-}
-
-.event-details {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin: 16px 0;
-  padding: 24px;
-  border-radius: 8px;
-  background: var(--app-color-bg-muted);
-  list-style: none;
-
-  li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-}
-
-.detail-icon {
-  display: grid;
-  flex: 0 0 32px;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  margin-right: 4px;
-  border-radius: 50%;
-
-  // color-audit: allow-content-start
-  &.blue {
-    color: #2563eb;
-    background: #dbeafe;
-  }
-  &.red {
-    color: #dc2626;
-    background: #fee2e2;
-  }
-  &.violet {
-    color: #7c3aed;
-    background: #f3e8ff;
-  }
-  // color-audit: allow-content-end
-}
-
-.signature {
-  display: flex;
-  flex-direction: column;
-  padding-top: 8px;
-
-  > strong {
-    font-size: 15px;
-  }
-  > b {
-    padding-top: 4px;
-    color: var(--app-color-text-strong);
-    font-family: Georgia, serif;
-    font-size: 18px;
-    line-height: 28px;
-  }
-  > span {
-    padding-top: 4px;
-    color: var(--app-color-text-secondary);
-    font-size: 13px;
-  }
 }
 
 .empty-detail {

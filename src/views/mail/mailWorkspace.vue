@@ -20,37 +20,46 @@
           <SvgIcon name="mail-contacts" :size="20" />
           <span>{{ t('mail.contacts') }}</span>
         </div>
-        <div class="profile">
+        <div v-if="currentUser" class="profile">
           <span class="profile-image">
-            <el-avatar :size="40" :src="profileAvatar" alt="zhouqin" />
+            <el-avatar :size="40" :src="currentUser.avatar" :alt="currentUser.username" />
             <i></i>
           </span>
           <span class="profile-copy">
-            <strong>zhouqin</strong>
-            <small>@smartapp.net.cn</small>
+            <strong>{{ currentUser.username }}</strong>
+            <small>{{ currentUser.domain }}</small>
           </span>
           <SvgIcon name="mail-chevron" :size="16" />
         </div>
       </div>
     </header>
 
-    <MailSidebar />
+    <MailSidebar :folders="folders" />
     <MailListPanel
       :title="title"
       :mails="filteredMails"
-      :selected-mail-id="selectedMail?.id"
+      :selected-mail-id="selectedMailId"
+      :loading="listLoading"
+      :error="listError"
       @select="selectMail"
     />
-    <MailDetailPanel :mail="selectedMail" :mailbox="mailbox" />
+    <MailDetailPanel
+      :mail="selectedMail"
+      :mailbox="mailbox"
+      :loading="detailLoading"
+      :error="detailError"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import profileAvatar from '@/assets/mail/mail-image-4.png'
-import type { Mail, MailboxType } from '@/types/mail'
+import { getCurrentUser } from '@/api/account'
+import { getMailFolders, getMailMessage, getMailMessages } from '@/api/mail'
+import type { CurrentUser } from '@/types/account'
+import type { Mail, MailDetail, MailFolder, MailboxType } from '@/types/mail'
 import MailDetailPanel from './components/MailDetailPanel.vue'
 import MailListPanel from './components/MailListPanel.vue'
 import MailSidebar from './components/MailSidebar.vue'
@@ -59,100 +68,29 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const searchQuery = ref('')
-
-const mails: Mail[] = [
-  {
-    id: 'art-invitation',
-    sender: 'Ruoxi Xu',
-    initials: 'Ru',
-    subject: "Contemporary Art Exhibition: 'Boundaries and Flow' Opening Invitation",
-    preview: 'You are cordially invited to attend the exhibition next Saturday...',
-    time: '12:15',
-    color: '#2563eb',
-    email: 'ruoxi.xu@example.com',
-    recipient: 'ivyzhouqin',
-    date: '6/18 Thu 12:15',
-    unread: true,
-    new: true,
-    external: true,
-    attachment: true,
-  },
-  {
-    id: 'meeting-notes',
-    sender: 'Li An',
-    initials: 'Li',
-    subject: 'Product Launch Prep Meeting Notes',
-    preview: 'Hi everyone, yesterday afternoon we held the product launch preparation meeting...',
-    time: '12:15',
-    color: '#3b82f6',
-    email: 'li.an@example.com',
-    recipient: 'zhouqin',
-    date: '6/18 Thu 12:15',
-  },
-  {
-    id: 'external-news',
-    sender: 'Li Con',
-    initials: 'Li',
-    subject: 'Industry Newsletter and Market Highlights',
-    preview: 'This week we are sharing the latest market highlights and industry news...',
-    time: '12:15',
-    color: '#afd230',
-    email: 'li.con@example.com',
-    recipient: 'zhouqin',
-    date: '6/18 Thu 12:15',
-    external: true,
-  },
-  {
-    id: 'team-update',
-    sender: 'Ma Any',
-    initials: 'Ma',
-    subject: 'Team Project Status Update',
-    preview: 'Here is the latest progress update from the product and design teams...',
-    time: '12:15',
-    color: '#3fc1f4',
-    email: 'ma.any@example.com',
-    recipient: 'product-team',
-    date: '6/18 Thu 12:15',
-    group: true,
-    attachment: true,
-  },
-  {
-    id: 'release-plan',
-    sender: 'Hnu An',
-    initials: 'Hn',
-    subject: 'Release Plan Review Required',
-    preview: 'Please review the attached release plan before our next sync...',
-    time: '12:15',
-    color: '#af2161',
-    email: 'hnu.an@example.com',
-    recipient: 'release-group',
-    date: '6/18 Thu 12:15',
-    unread: true,
-    new: true,
-    group: true,
-    attachment: true,
-  },
-  {
-    id: 'weekly-review',
-    sender: 'Zi Yo',
-    initials: 'Zi',
-    subject: 'Weekly Performance Review',
-    preview: 'The weekly performance summary is ready for your review...',
-    time: '12:15',
-    color: '#3b82f6',
-    email: 'zi.yo@example.com',
-    recipient: 'zhouqin',
-    date: '6/18 Thu 12:15',
-  },
-]
+const currentUser = ref<CurrentUser>()
+const folders = ref<MailFolder[]>([])
+const mails = ref<Mail[]>([])
+const selectedMail = ref<MailDetail>()
+const listLoading = ref(false)
+const detailLoading = ref(false)
+const listError = ref('')
+const detailError = ref('')
+let listRequest = 0
+let detailRequest = 0
 
 const title = computed(() => t(`pages.${String(route.meta.pageKey)}`))
 const mailbox = computed(() => (route.meta.mailbox as MailboxType | undefined) ?? 'inbox')
-const selectedMail = computed(() => mails.find((mail) => mail.id === route.params.messageId))
+const folderId = computed(() =>
+  typeof route.params.folderId === 'string' ? route.params.folderId : undefined,
+)
+const selectedMailId = computed(() =>
+  typeof route.params.messageId === 'string' ? route.params.messageId : undefined,
+)
 const filteredMails = computed(() => {
   const query = searchQuery.value.trim().toLowerCase()
-  if (!query) return mails
-  return mails.filter((mail) =>
+  if (!query) return mails.value
+  return mails.value.filter((mail) =>
     `${mail.sender} ${mail.subject} ${mail.preview}`.toLowerCase().includes(query),
   )
 })
@@ -161,12 +99,60 @@ function selectMail(messageId: string) {
   router.push({ name: route.name ?? 'inbox', params: { ...route.params, messageId } })
 }
 
+async function loadShell() {
+  try {
+    ;[currentUser.value, folders.value] = await Promise.all([getCurrentUser(), getMailFolders()])
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : t('mail.load.accountFailed'))
+  }
+}
+
+async function loadList() {
+  const requestId = ++listRequest
+  listLoading.value = true
+  listError.value = ''
+
+  try {
+    const result = await getMailMessages({ mailbox: mailbox.value, folderId: folderId.value })
+    if (requestId === listRequest) mails.value = result
+  } catch {
+    if (requestId === listRequest) {
+      mails.value = []
+      listError.value = t('mail.load.listFailed')
+    }
+  } finally {
+    if (requestId === listRequest) listLoading.value = false
+  }
+}
+
+async function loadDetail() {
+  const requestId = ++detailRequest
+  selectedMail.value = undefined
+  detailError.value = ''
+  if (!selectedMailId.value) return
+
+  detailLoading.value = true
+  try {
+    const result = await getMailMessage(selectedMailId.value)
+    if (requestId === detailRequest) selectedMail.value = result
+  } catch {
+    if (requestId === detailRequest) detailError.value = t('mail.load.detailFailed')
+  } finally {
+    if (requestId === detailRequest) detailLoading.value = false
+  }
+}
+
 watch(
-  () => route.meta.mailbox,
+  [mailbox, folderId],
   () => {
     searchQuery.value = ''
+    void loadList()
   },
+  { immediate: true },
 )
+
+watch(selectedMailId, () => void loadDetail(), { immediate: true })
+onMounted(() => void loadShell())
 </script>
 
 <style scoped lang="scss">

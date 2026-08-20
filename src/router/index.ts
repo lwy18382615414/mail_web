@@ -52,7 +52,7 @@ const router = createRouter({
           meta: { mailbox: 'starred', pageKey: 'starred' },
         },
         {
-          path: 'mail/drafts',
+          path: 'mail/drafts/:messageId?',
           name: 'drafts',
           component: MailWorkspace,
           meta: { mailbox: 'drafts', pageKey: 'drafts' },

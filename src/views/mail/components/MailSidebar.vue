@@ -55,17 +55,41 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import type { MailFolder, MailboxType } from '@/types/mail'
 
 const route = useRoute()
 const { t } = useI18n()
 
+const props = defineProps<{
+  folders: MailFolder[]
+}>()
+
+function folderCount(mailbox: MailboxType) {
+  return props.folders.find((folder) => folder.mailbox === mailbox)?.totalCount ?? 0
+}
+
 const navigation = computed(() => [
-  { label: t('pages.inbox'), path: '/mail/inbox', icon: 'mail-inbox', count: 12 },
-  { label: t('pages.starred'), path: '/mail/starred', icon: 'mail-star' },
-  { label: t('pages.drafts'), path: '/mail/drafts', icon: 'mail-draft', count: 3 },
-  { label: t('pages.sent'), path: '/mail/sent', icon: 'mail-sent' },
-  { label: t('pages.trash'), path: '/mail/trash', icon: 'mail-delete' },
-  { label: t('pages.spam'), path: '/mail/spam', icon: 'mail-spam' },
+  { label: t('pages.inbox'), path: '/mail/inbox', icon: 'mail-inbox', count: folderCount('inbox') },
+  {
+    label: t('pages.starred'),
+    path: '/mail/starred',
+    icon: 'mail-star',
+    count: folderCount('starred'),
+  },
+  {
+    label: t('pages.drafts'),
+    path: '/mail/drafts',
+    icon: 'mail-draft',
+    count: folderCount('drafts'),
+  },
+  { label: t('pages.sent'), path: '/mail/sent', icon: 'mail-sent', count: folderCount('sent') },
+  {
+    label: t('pages.trash'),
+    path: '/mail/trash',
+    icon: 'mail-delete',
+    count: folderCount('trash'),
+  },
+  { label: t('pages.spam'), path: '/mail/spam', icon: 'mail-spam', count: folderCount('spam') },
 ])
 </script>
 

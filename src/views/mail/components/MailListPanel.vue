@@ -80,16 +80,24 @@
       </el-dropdown>
     </header>
 
-    <div class="mail-list">
+    <div v-loading="loading" class="mail-list">
+      <el-empty v-if="error" :description="error" />
+      <el-empty
+        v-else-if="!loading && displayedMails.length === 0"
+        :description="t('mail.empty.list')"
+      />
       <div
         v-for="mail in displayedMails"
         :key="mail.id"
         :class="['mail-item', { selected: selectedMailId === mail.id, unread: mail.unread }]"
         @click="$emit('select', mail.id)"
       >
-        <el-avatar class="avatar" :size="40" :style="{ background: getAvatarColor(mail.initials) }">{{
-          mail.initials
-        }}</el-avatar>
+        <el-avatar
+          class="avatar"
+          :size="40"
+          :style="{ background: getAvatarColor(mail.initials) }"
+          >{{ mail.initials }}</el-avatar
+        >
         <span class="mail-summary">
           <span class="mail-meta">
             <span class="sender-line">
@@ -102,14 +110,28 @@
           </span>
           <strong class="subject">{{ mail.subject }}</strong>
           <span class="preview">{{ mail.preview }}</span>
-          <span v-if="mail.group || mail.external || mail.attachment" class="mail-flags">
-            <el-tag v-if="mail.group" class="tag group" effect="light">{{
-              t('mail.tags.group')
-            }}</el-tag>
-            <el-tag v-if="mail.external" class="tag external" effect="light">{{
-              t('mail.tags.external')
-            }}</el-tag>
-            <SvgIcon v-if="mail.attachment" name="mail-receipt" :size="20" />
+          <span
+            v-if="mail.group || mail.external || mail.attachment || mail.starred"
+            class="mail-flags"
+          >
+            <span class="mail-flag-tags">
+              <el-tag v-if="mail.group" class="tag group" effect="light">{{
+                t('mail.tags.group')
+              }}</el-tag>
+              <el-tag v-if="mail.external" class="tag external" effect="light">{{
+                t('mail.tags.external')
+              }}</el-tag>
+              <span v-if="mail.attachment" class="attachment-badge" aria-hidden="true">
+                <SvgIcon name="mail-attachment" />
+              </span>
+            </span>
+            <SvgIcon
+              v-if="mail.starred"
+              class="starred-icon"
+              name="mail-starred"
+              :size="20"
+              :title="t('mail.actions.star')"
+            />
           </span>
         </span>
         <i v-if="mail.unread" class="unread-dot"></i>
@@ -130,6 +152,8 @@ const props = defineProps<{
   title: string
   mails: Mail[]
   selectedMailId?: string
+  loading?: boolean
+  error?: string
 }>()
 
 defineEmits<{
@@ -216,7 +240,7 @@ function handleFilterVisibleChange(visible: boolean) {
   }
 
   .filter-trigger {
-    color: var(--app-color-text-disabled);
+    color: var(--app-color-text-primary);
     transition: color 120ms ease;
 
     &.expanded {
@@ -300,6 +324,7 @@ function handleFilterVisibleChange(visible: boolean) {
 
 .mail-meta,
 .mail-flags,
+.mail-flag-tags,
 .sender-line {
   display: flex;
   align-items: center;
@@ -346,6 +371,33 @@ function handleFilterVisibleChange(visible: boolean) {
 .mail-flags {
   justify-content: space-between;
   min-height: 18px;
+}
+
+.mail-flag-tags {
+  gap: 12px;
+  min-width: 0;
+}
+
+.attachment-badge {
+  display: inline-flex;
+  width: 27.6px;
+  height: 18px;
+  flex: 0 0 27.6px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4.8px;
+  color: var(--app-color-danger-emphasis);
+  background: var(--app-color-danger-tint);
+
+  .svg-icon {
+    width: 13.2px !important;
+    height: 13.2px !important;
+  }
+}
+
+.starred-icon {
+  flex: 0 0 20px;
+  stroke: none !important;
 }
 
 .tag {

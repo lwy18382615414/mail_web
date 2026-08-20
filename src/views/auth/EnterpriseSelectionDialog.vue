@@ -50,14 +50,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-export interface EnterpriseAccount {
-  id: string
-  email: string
-  company: string
-  avatarText: string
-  avatarColor: string
-}
+import type { EnterpriseAccount } from '@/types/account'
 
 const props = defineProps<{
   accounts: EnterpriseAccount[]

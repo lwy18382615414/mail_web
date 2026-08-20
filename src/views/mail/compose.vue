@@ -568,7 +568,7 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgb(17 24 39 / 42%);
+  background: var(--app-color-overlay);
 }
 
 .confirmation-dialog {

@@ -2,7 +2,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 
 const sourceRoot = path.resolve('src')
-const colorPattern = /#[\da-f]{3,8}\b|rgba?\([^)]*\)/i
+const colorPattern = /#[\da-f]{3,8}\b|(?:rgb|hsl)a?\([^)]*\)|\b(?:white|black)\b(?!-)/i
 const sourceExtensions = new Set(['.vue', '.scss', '.ts'])
 
 const allowedLinePatterns = [

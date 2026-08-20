@@ -170,19 +170,14 @@ watch(
 
 <style scoped lang="scss">
 .mail-workspace {
-  --primary: #2563eb;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --hint: #9ca3af;
-  --line: #e5e7eb;
   display: grid;
   grid-template-columns: 280px 516px minmax(560px, 1fr);
   grid-template-rows: 72px minmax(0, calc(100vh - 72px));
   min-width: 1180px;
   min-height: 100vh;
   overflow: hidden;
-  color: var(--text);
-  background: #f2f3f5;
+  color: var(--app-color-text-primary);
+  background: var(--app-color-bg-subtle);
   font-family: Inter, 'Segoe UI', sans-serif;
 }
 
@@ -195,8 +190,8 @@ watch(
   justify-content: space-between;
   height: 72px;
   padding: 0 16px;
-  border-bottom: 1px solid rgba(17, 17, 17, 0.1);
-  background: #f8f9fa;
+  border-bottom: 1px solid var(--app-color-divider-translucent);
+  background: var(--app-color-bg-muted);
 }
 
 .brand {
@@ -227,16 +222,16 @@ watch(
   :deep(.el-input__wrapper) {
     padding: 0 17px;
     border-radius: 999px;
-    background: #f2f3f5;
-    box-shadow: 0 0 0 1px var(--line) inset;
+    background: var(--app-color-bg-subtle);
+    box-shadow: 0 0 0 1px var(--app-color-border) inset;
   }
 
   :deep(.el-input__inner) {
-    color: var(--text);
+    color: var(--app-color-text-primary);
     font-size: 15px;
 
     &::placeholder {
-      color: var(--hint);
+      color: var(--app-color-text-disabled);
     }
   }
 }
@@ -260,7 +255,7 @@ watch(
   align-items: center;
   gap: 12px;
   padding-left: 32px;
-  border-left: 1px solid var(--line);
+  border-left: 1px solid var(--app-color-border);
 }
 
 .profile-image {
@@ -269,7 +264,7 @@ watch(
   height: 40px;
 
   .el-avatar {
-    border: 1px solid white;
+    border: 1px solid var(--app-color-bg-surface);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
@@ -279,9 +274,9 @@ watch(
     bottom: 0;
     width: 10px;
     height: 10px;
-    border: 1px solid white;
+    border: 1px solid var(--app-color-bg-surface);
     border-radius: 50%;
-    background: #2bd03e;
+    background: var(--app-color-presence-online);
   }
 }
 
@@ -295,7 +290,7 @@ watch(
   }
 
   small {
-    color: var(--muted);
+    color: var(--app-color-text-secondary);
     font-size: 12px;
     line-height: 18px;
   }

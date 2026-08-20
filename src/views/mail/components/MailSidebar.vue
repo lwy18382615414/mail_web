@@ -77,8 +77,8 @@ const navigation = computed(() => [
   gap: 12px;
   min-height: 0;
   padding: 24px 25px 24px 24px;
-  border-right: 1px solid var(--line);
-  background: #f8f9fa;
+  border-right: 1px solid var(--app-color-border);
+  background: var(--app-color-bg-muted);
 }
 
 .compose-button {
@@ -89,8 +89,8 @@ const navigation = computed(() => [
   width: 100%;
   height: 48px;
   border-radius: 8px;
-  color: white;
-  background: var(--primary);
+  color: var(--app-color-text-on-color);
+  background: var(--app-color-brand);
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
@@ -108,15 +108,15 @@ const navigation = computed(() => [
     min-height: 46px;
     padding: 0 16px;
     border-radius: 8px;
-    color: var(--muted);
+    color: var(--app-color-text-secondary);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
 
     &:hover,
     &.active {
-      color: var(--primary);
-      background: #e6effa;
+      color: var(--app-color-brand);
+      background: var(--app-color-brand-selection);
       font-weight: 700;
     }
   }
@@ -132,15 +132,15 @@ const navigation = computed(() => [
 .nav-count {
   height: auto;
   border: 0;
-  color: var(--muted);
+  color: var(--app-color-text-secondary);
   background: transparent;
 
   &.primary {
     min-width: 36px;
     height: 24px;
     padding: 0 10px;
-    color: white;
-    background: var(--primary);
+    color: var(--app-color-text-on-color);
+    background: var(--app-color-brand);
     font-size: 12px;
     line-height: 20px;
     text-align: center;
@@ -155,10 +155,10 @@ const navigation = computed(() => [
     align-items: center;
     justify-content: space-between;
     padding: 16px 16px 8px;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--app-color-border);
 
     strong {
-      color: #0f172a;
+      color: var(--app-color-text-heading);
       font-size: 12px;
       line-height: 20px;
     }
@@ -173,7 +173,7 @@ const navigation = computed(() => [
     min-height: 48px;
     padding: 0 16px;
     border-radius: 8px;
-    color: var(--muted);
+    color: var(--app-color-text-secondary);
     font-size: 14px;
     text-decoration: none;
   }
@@ -182,17 +182,17 @@ const navigation = computed(() => [
 .storage {
   margin-top: auto;
   padding-top: 24px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--app-color-border);
 
   div {
     display: flex;
     justify-content: space-between;
-    color: var(--muted);
+    color: var(--app-color-text-secondary);
     font-size: 14px;
     line-height: 22px;
 
     b {
-      color: var(--primary);
+      color: var(--app-color-brand);
       font-weight: 500;
     }
   }
@@ -201,10 +201,10 @@ const navigation = computed(() => [
     margin-top: 12px;
 
     :deep(.el-progress-bar__outer) {
-      background: #e1e3e5;
+      background: var(--app-color-border-muted);
     }
     :deep(.el-progress-bar__inner) {
-      background: var(--primary);
+      background: var(--app-color-brand);
     }
   }
 }

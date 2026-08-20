@@ -76,8 +76,8 @@ defineEmits<{
   grid-row: 2;
   min-width: 0;
   overflow: hidden;
-  border-right: 1px solid var(--line);
-  background: #f8f9fa;
+  border-right: 1px solid var(--app-color-border);
+  background: var(--app-color-bg-muted);
 }
 
 .list-heading {
@@ -122,9 +122,9 @@ defineEmits<{
   height: auto;
   margin: 0;
   border: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--app-color-border);
   border-left: 4px solid transparent;
-  color: var(--text);
+  color: var(--app-color-text-primary);
   background: transparent;
   font: inherit;
   text-align: left;
@@ -132,21 +132,21 @@ defineEmits<{
 
   &.selected {
     border-bottom-color: transparent;
-    border-left-color: var(--primary);
+    border-left-color: var(--app-color-brand);
     border-radius: 4px;
-    background: white;
+    background: var(--app-color-bg-surface);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
   }
 
   &:hover:not(.selected) {
-    background: rgba(255, 255, 255, 0.64);
+    background: var(--app-color-bg-surface-translucent);
   }
 }
 
 .avatar {
   flex: 0 0 40px;
   border-radius: 16px;
-  color: white;
+  color: var(--app-color-text-on-color);
   font-size: 14px;
   font-weight: 700;
 }
@@ -171,13 +171,13 @@ defineEmits<{
   justify-content: space-between;
 
   strong {
-    color: #0f172a;
+    color: var(--app-color-text-heading);
     font-size: 15px;
     line-height: 22px;
   }
 
   time {
-    color: var(--hint);
+    color: var(--app-color-text-disabled);
     font-size: 12px;
   }
 }
@@ -199,7 +199,7 @@ defineEmits<{
 }
 
 .preview {
-  color: var(--muted);
+  color: var(--app-color-text-secondary);
   font-size: 14px;
   font-weight: 500;
   line-height: 22px;
@@ -221,16 +221,16 @@ defineEmits<{
   line-height: 14px;
 
   &.new {
-    color: var(--primary);
-    background: rgba(37, 99, 235, 0.12);
+    color: var(--app-color-brand);
+    background: var(--app-color-brand-tint);
   }
   &.group {
-    color: #e14745;
-    background: rgba(239, 68, 68, 0.12);
+    color: var(--app-color-danger-emphasis);
+    background: var(--app-color-danger-tint);
   }
   &.external {
-    color: #f90;
-    background: rgba(255, 153, 0, 0.12);
+    color: var(--app-color-warning-emphasis);
+    background: var(--app-color-warning-tint);
   }
 }
 
@@ -241,6 +241,6 @@ defineEmits<{
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--app-color-brand);
 }
 </style>

@@ -16,9 +16,12 @@
   --app-color-brand-subtle-hover: var(--app-color-brand-100);
   --app-color-brand-border: var(--app-color-brand-200);
   --app-color-brand-focus: rgb(37 99 235 / 24%);
+  --app-color-brand-tint: rgb(37 99 235 / 12%);
+  --app-color-brand-selection: #e6effa;
 
   --app-color-text-primary: #1f2937;
   --app-color-text-strong: #111827;
+  --app-color-text-heading: #0f172a;
   --app-color-text-secondary: #6b7280;
   --app-color-text-placeholder: #6b7280;
   --app-color-text-disabled: #9ca3af;
@@ -29,15 +32,26 @@
   --app-color-bg-muted: #f8f9fa;
   --app-color-bg-subtle: #f2f3f5;
   --app-color-bg-hover: #f1f5f9;
+  --app-color-bg-surface-translucent: rgb(255 255 255 / 64%);
   --app-color-border: #e5e7eb;
   --app-color-border-strong: #d1d5db;
+  --app-color-border-muted: #e1e3e5;
+  --app-color-divider-translucent: rgb(17 17 17 / 10%);
+  --app-color-overlay: rgb(17 24 39 / 42%);
+  --app-color-scrollbar-thumb: #d1d5da;
+  --app-color-scrollbar-thumb-active: #8c929a;
 
   --app-color-success: #16a34a;
   --app-color-success-subtle: #f0fdf4;
+  --app-color-presence-online: #2bd03e;
   --app-color-warning: #d97706;
   --app-color-warning-subtle: #fffbeb;
+  --app-color-warning-emphasis: #ff9900;
+  --app-color-warning-tint: rgb(255 153 0 / 12%);
   --app-color-danger: #dc2626;
   --app-color-danger-subtle: #fef2f2;
+  --app-color-danger-emphasis: #e14745;
+  --app-color-danger-tint: rgb(239 68 68 / 12%);
   --app-color-info: #0284c7;
   --app-color-info-subtle: #eff6ff;
   --app-color-info-border: #dbeafe;

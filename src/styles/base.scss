@@ -12,7 +12,7 @@
 }
 
 *:hover {
-  --app-scrollbar-thumb: #d1d5da;
+  --app-scrollbar-thumb: var(--app-color-scrollbar-thumb);
 }
 
 @supports (-moz-appearance: none) {
@@ -45,7 +45,7 @@
 }
 
 *::-webkit-scrollbar-thumb:active {
-  background-color: #8c929a;
+  background-color: var(--app-color-scrollbar-thumb-active);
 }
 
 *::-webkit-scrollbar-corner {

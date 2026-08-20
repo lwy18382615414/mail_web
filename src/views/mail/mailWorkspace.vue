@@ -16,10 +16,10 @@
       </el-input>
 
       <div class="account-area">
-        <el-button class="contacts-button" link type="primary">
+        <div class="contacts-button">
           <SvgIcon name="mail-contacts" :size="20" />
           <span>{{ t('mail.contacts') }}</span>
-        </el-button>
+        </div>
         <div class="profile">
           <span class="profile-image">
             <el-avatar :size="40" :src="profileAvatar" alt="zhouqin" />
@@ -41,7 +41,7 @@
       :selected-mail-id="selectedMail?.id"
       @select="selectMail"
     />
-    <MailDetailPanel :mail="selectedMail" />
+    <MailDetailPanel :mail="selectedMail" :mailbox="mailbox" />
   </div>
 </template>
 
@@ -50,7 +50,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import profileAvatar from '@/assets/mail/mail-image-4.png'
-import type { Mail } from '@/types/mail'
+import type { Mail, MailboxType } from '@/types/mail'
 import MailDetailPanel from './components/MailDetailPanel.vue'
 import MailListPanel from './components/MailListPanel.vue'
 import MailSidebar from './components/MailSidebar.vue'
@@ -147,6 +147,7 @@ const mails: Mail[] = [
 ]
 
 const title = computed(() => t(`pages.${String(route.meta.pageKey)}`))
+const mailbox = computed(() => (route.meta.mailbox as MailboxType | undefined) ?? 'inbox')
 const selectedMail = computed(() => mails.find((mail) => mail.id === route.params.messageId))
 const filteredMails = computed(() => {
   const query = searchQuery.value.trim().toLowerCase()
@@ -189,7 +190,7 @@ watch(
   align-items: center;
   justify-content: space-between;
   height: 72px;
-  padding: 0 16px;
+  padding: 0 24px;
   border-bottom: 1px solid var(--app-color-divider-translucent);
   background: var(--app-color-bg-muted);
 }
@@ -244,6 +245,9 @@ watch(
 }
 
 .contacts-button {
+  display: flex;
+  align-items: center;
+  color: var(--app-color-brand);
   gap: 8px;
   padding: 0;
   font-size: 15px;
@@ -304,6 +308,7 @@ watch(
   .topbar {
     display: grid;
     grid-template-columns: 240px 400px 1fr;
+    padding: 0 16px;
   }
 
   .topbar > .global-search {

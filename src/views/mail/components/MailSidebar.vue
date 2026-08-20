@@ -76,7 +76,7 @@ const navigation = computed(() => [
   flex-direction: column;
   gap: 12px;
   min-height: 0;
-  padding: 24px 25px 24px 24px;
+  padding: 24px;
   border-right: 1px solid var(--app-color-border);
   background: var(--app-color-bg-muted);
 }

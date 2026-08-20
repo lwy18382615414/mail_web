@@ -1,32 +1,23 @@
 <template>
   <main class="mail-detail">
-    <header class="detail-toolbar">
+    <header v-if="mail" class="detail-toolbar">
       <div class="toolbar-group">
-        <div class="toolbar-action danger" tabindex="0">
-          <SvgIcon name="mail-delete" :size="24" />
-          <span>{{ t('mail.actions.delete') }}</span>
-        </div>
-        <div class="toolbar-action" tabindex="0">
-          <SvgIcon name="mail-spam" :size="24" />
-          <span>{{ t('mail.actions.reject') }}</span>
-        </div>
-        <i class="toolbar-divider" aria-hidden="true"></i>
-        <div class="toolbar-action" tabindex="0">
-          <SvgIcon name="mail-reply" :size="24" />
-          <span>{{ t('mail.actions.reply') }}</span>
-        </div>
-        <div class="toolbar-action" tabindex="0">
-          <SvgIcon name="mail-reply-all" :size="24" />
-          <span>{{ t('mail.actions.replyAll') }}</span>
-        </div>
-        <div class="toolbar-action" tabindex="0">
-          <SvgIcon name="mail-forward" :size="24" />
-          <span>{{ t('mail.actions.forward') }}</span>
-        </div>
+        <template v-for="action in toolbarActions" :key="action.key">
+          <i v-if="action.dividerBefore" class="toolbar-divider" aria-hidden="true"></i>
+          <button
+            class="toolbar-action"
+            :class="{ danger: action.danger }"
+            type="button"
+            :title="t(action.labelKey)"
+          >
+            <SvgIcon :name="action.icon" :size="24" />
+            <span>{{ t(action.labelKey) }}</span>
+          </button>
+        </template>
       </div>
-      <div class="toolbar-action more-button" tabindex="0" :title="t('mail.actions.more')">
+      <button class="toolbar-action more-button" type="button" :title="t('mail.actions.more')">
         <SvgIcon name="mail-more" :size="24" />
-      </div>
+      </button>
     </header>
 
     <article v-if="mail" class="message">
@@ -122,14 +113,57 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Mail } from '@/types/mail'
+import type { Mail, MailboxType } from '@/types/mail'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   mail?: Mail
+  mailbox: MailboxType
 }>()
+
+type ToolbarAction = {
+  key: string
+  icon: string
+  labelKey: string
+  danger?: boolean
+  dividerBefore?: boolean
+}
+
+const toolbarActions = computed<ToolbarAction[]>(() => {
+  if (props.mailbox === 'sent') {
+    return [
+      { key: 'delete', icon: 'mail-delete', labelKey: 'mail.actions.delete', danger: true },
+      { key: 'edit-again', icon: 'mail-compose', labelKey: 'mail.actions.editAgain' },
+    ]
+  }
+
+  if (props.mailbox === 'trash' || props.mailbox === 'spam') {
+    return [
+      {
+        key: 'permanently-delete',
+        icon: 'mail-delete',
+        labelKey: 'mail.actions.permanentlyDelete',
+        danger: true,
+      },
+    ]
+  }
+
+  return [
+    { key: 'delete', icon: 'mail-delete', labelKey: 'mail.actions.delete', danger: true },
+    { key: 'reject', icon: 'mail-spam', labelKey: 'mail.actions.reject' },
+    {
+      key: 'reply',
+      icon: 'mail-reply',
+      labelKey: 'mail.actions.reply',
+      dividerBefore: true,
+    },
+    { key: 'reply-all', icon: 'mail-reply-all', labelKey: 'mail.actions.replyAll' },
+    { key: 'forward', icon: 'mail-forward', labelKey: 'mail.actions.forward' },
+  ]
+})
 </script>
 
 <style scoped lang="scss">
@@ -159,7 +193,11 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0;
+  border: 0;
   color: var(--app-color-text-primary);
+  background: transparent;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 500;
   line-height: 21px;
@@ -429,7 +467,7 @@ defineProps<{
 
 .empty-detail {
   display: grid;
-  height: calc(100% - 72px);
+  height: 100%;
   place-content: center;
   color: var(--app-color-text-placeholder);
   text-align: center;

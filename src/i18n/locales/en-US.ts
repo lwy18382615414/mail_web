@@ -100,9 +100,17 @@ export default {
       storage: 'Storage',
     },
     filters: {
+      filter: 'Filter',
       all: 'All',
       unread: 'Unread',
-      flagged: 'Flagged',
+      sortBy: 'Sort by',
+      date: 'Date',
+      sender: 'Sender',
+      size: 'Size',
+      priority: 'Priority',
+      order: 'Order',
+      oldest: 'Oldest first',
+      newest: 'Newest first',
     },
     tags: {
       new: 'NEW',
@@ -146,6 +154,8 @@ export default {
     },
     actions: {
       delete: 'Delete',
+      permanentlyDelete: 'Delete Permanently',
+      editAgain: 'Edit Again',
       reject: 'Reject',
       reply: 'Reply',
       replyAll: 'Reply All',

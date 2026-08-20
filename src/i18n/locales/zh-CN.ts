@@ -100,9 +100,17 @@ export default {
       storage: '存储空间',
     },
     filters: {
+      filter: '筛选',
       all: '全部',
       unread: '未读',
-      flagged: '已标记',
+      sortBy: '排序方式',
+      date: '日期',
+      sender: '发件人',
+      size: '大小',
+      priority: '优先级',
+      order: '排序',
+      oldest: '由旧到新',
+      newest: '由新到旧',
     },
     tags: {
       new: '新邮件',
@@ -146,6 +154,8 @@ export default {
     },
     actions: {
       delete: '删除',
+      permanentlyDelete: '彻底删除',
+      editAgain: '再次编辑',
       reject: '拒收',
       reply: '回复',
       replyAll: '回复全部',

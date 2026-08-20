@@ -2,15 +2,79 @@
   <section class="mail-list-panel">
     <header class="list-heading">
       <h1>{{ title }}</h1>
-      <el-dropdown trigger="click">
-        <el-button link>
-          {{ t('mail.filters.all') }} <SvgIcon name="mail-chevron" :size="20" />
+      <el-dropdown
+        trigger="click"
+        placement="bottom-end"
+        :show-arrow="false"
+        :popper-options="filterPopperOptions"
+        popper-class="mail-filter-popper"
+        @command="handleFilterCommand"
+        @visible-change="handleFilterVisibleChange"
+      >
+        <el-button
+          class="filter-trigger"
+          :class="{ expanded: isFilterOpen }"
+          :aria-expanded="isFilterOpen"
+          link
+        >
+          {{ t(`mail.filters.${filter}`) }}
+          <span class="filter-chevron" aria-hidden="true">
+            <SvgIcon name="mail-filter-chevron" />
+          </span>
         </el-button>
         <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item>{{ t('mail.filters.all') }}</el-dropdown-item>
-            <el-dropdown-item>{{ t('mail.filters.unread') }}</el-dropdown-item>
-            <el-dropdown-item>{{ t('mail.filters.flagged') }}</el-dropdown-item>
+          <el-dropdown-menu class="mail-filter-menu">
+            <li class="filter-group" role="group" :aria-label="t('mail.filters.filter')">
+              <el-dropdown-item class="menu-label" disabled>
+                {{ t('mail.filters.filter') }}
+              </el-dropdown-item>
+              <el-dropdown-item command="filter:all" :class="{ active: filter === 'all' }">
+                {{ t('mail.filters.all') }}
+                <span v-if="filter === 'all'" class="check-icon" aria-hidden="true">
+                  <SvgIcon name="mail-check" />
+                </span>
+              </el-dropdown-item>
+              <el-dropdown-item command="filter:unread" :class="{ active: filter === 'unread' }">
+                {{ t('mail.filters.unread') }}
+                <span v-if="filter === 'unread'" class="check-icon" aria-hidden="true">
+                  <SvgIcon name="mail-check" />
+                </span>
+              </el-dropdown-item>
+            </li>
+
+            <li class="filter-group" role="group" :aria-label="t('mail.filters.sortBy')">
+              <el-dropdown-item class="menu-label" disabled>
+                {{ t('mail.filters.sortBy') }}
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-for="option in sortOptions"
+                :key="option"
+                :command="`sort:${option}`"
+                :class="{ active: sortBy === option }"
+              >
+                {{ t(`mail.filters.${option}`) }}
+                <span v-if="sortBy === option" class="check-icon" aria-hidden="true">
+                  <SvgIcon name="mail-check" />
+                </span>
+              </el-dropdown-item>
+            </li>
+
+            <li class="filter-group" role="group" :aria-label="t('mail.filters.order')">
+              <el-dropdown-item class="menu-label" disabled>
+                {{ t('mail.filters.order') }}
+              </el-dropdown-item>
+              <el-dropdown-item
+                v-for="option in orderOptions"
+                :key="option"
+                :command="`order:${option}`"
+                :class="{ active: sortOrder === option }"
+              >
+                {{ t(`mail.filters.${option}`) }}
+                <span v-if="sortOrder === option" class="check-icon" aria-hidden="true">
+                  <SvgIcon name="mail-check" />
+                </span>
+              </el-dropdown-item>
+            </li>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -18,7 +82,7 @@
 
     <div class="mail-list">
       <div
-        v-for="mail in mails"
+        v-for="mail in displayedMails"
         :key="mail.id"
         :class="['mail-item', { selected: selectedMailId === mail.id, unread: mail.unread }]"
         @click="$emit('select', mail.id)"
@@ -55,12 +119,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Mail } from '@/types/mail'
 
 const { t } = useI18n()
 
-defineProps<{
+const props = defineProps<{
   title: string
   mails: Mail[]
   selectedMailId?: string
@@ -69,6 +134,50 @@ defineProps<{
 defineEmits<{
   select: [messageId: string]
 }>()
+
+type MailFilter = 'all' | 'unread'
+type MailSort = 'date' | 'sender' | 'size' | 'priority'
+type SortOrder = 'oldest' | 'newest'
+
+const sortOptions: MailSort[] = ['date', 'sender', 'size', 'priority']
+const orderOptions: SortOrder[] = ['oldest', 'newest']
+const filterPopperOptions = {
+  modifiers: [{ name: 'offset', options: { offset: [0, 4] } }],
+}
+const filter = ref<MailFilter>('all')
+const sortBy = ref<MailSort>('date')
+const sortOrder = ref<SortOrder>('oldest')
+const isFilterOpen = ref(false)
+
+const displayedMails = computed(() => {
+  const filtered =
+    filter.value === 'unread' ? props.mails.filter((mail) => mail.unread) : props.mails
+  const direction = sortOrder.value === 'oldest' ? 1 : -1
+
+  return [...filtered].sort((first, second) => {
+    if (sortBy.value === 'sender') {
+      return first.sender.localeCompare(second.sender) * direction
+    }
+
+    if (sortBy.value === 'date') {
+      return (props.mails.indexOf(first) - props.mails.indexOf(second)) * direction
+    }
+
+    return 0
+  })
+})
+
+function handleFilterCommand(command: string) {
+  const [group, value] = command.split(':')
+
+  if (group === 'filter') filter.value = value as MailFilter
+  if (group === 'sort') sortBy.value = value as MailSort
+  if (group === 'order') sortOrder.value = value as SortOrder
+}
+
+function handleFilterVisibleChange(visible: boolean) {
+  isFilterOpen.value = visible
+}
 </script>
 
 <style scoped lang="scss">
@@ -104,6 +213,34 @@ defineEmits<{
     font-weight: 500;
     cursor: pointer;
   }
+
+  .filter-trigger {
+    color: var(--app-color-text-disabled);
+    transition: color 120ms ease;
+
+    &.expanded {
+      color: var(--app-color-brand);
+    }
+  }
+}
+
+.filter-chevron {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+
+  .svg-icon {
+    width: 7.5px !important;
+    height: 13.5px !important;
+    transform: rotate(-90deg);
+    transition: transform 160ms ease;
+  }
+}
+
+.filter-trigger.expanded .filter-chevron .svg-icon {
+  transform: rotate(90deg);
 }
 
 .mail-list {
@@ -242,5 +379,85 @@ defineEmits<{
   height: 6px;
   border-radius: 50%;
   background: var(--app-color-brand);
+}
+
+:global(.mail-filter-popper.el-popper) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+:global(.mail-filter-menu) {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 140px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--app-color-bg-surface);
+  box-shadow:
+    0 0 10px rgb(0 0 0 / 10%),
+    0 0 2px rgb(0 0 0 / 5%);
+}
+
+:global(.mail-filter-menu .filter-group) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 10px;
+  border-bottom: 1px solid var(--app-color-border);
+  list-style: none;
+}
+
+:global(.mail-filter-menu .filter-group:last-child) {
+  border-bottom: 0;
+}
+
+:global(.mail-filter-menu .el-dropdown-menu__item) {
+  justify-content: space-between;
+  min-height: 22px;
+  margin-inline: -6px;
+  padding: 0 6px;
+  border-radius: 4px;
+  color: var(--app-color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+:global(.mail-filter-menu .el-dropdown-menu__item.active) {
+  color: var(--app-color-brand);
+}
+
+:global(.mail-filter-menu .el-dropdown-menu__item.menu-label) {
+  min-height: 22px;
+  color: var(--app-color-text-disabled);
+  opacity: 1;
+  cursor: default;
+}
+
+:global(.mail-filter-menu .check-icon) {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  margin-block: -1px;
+}
+
+:global(.mail-filter-menu .check-icon .svg-icon) {
+  width: 19.5px !important;
+  height: 13.5px !important;
+}
+
+:global(.mail-filter-menu .el-dropdown-menu__item:not(.is-disabled):is(:hover, :focus)) {
+  color: var(--app-color-brand);
+  background: var(--app-color-brand-subtle);
 }
 </style>

@@ -1,3 +1,13 @@
+export type MailboxType =
+  | 'inbox'
+  | 'starred'
+  | 'drafts'
+  | 'sent'
+  | 'trash'
+  | 'spam'
+  | 'custom'
+  | 'search'
+
 export type Mail = {
   id: string
   sender: string

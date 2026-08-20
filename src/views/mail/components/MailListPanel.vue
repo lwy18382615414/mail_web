@@ -87,7 +87,7 @@
         :class="['mail-item', { selected: selectedMailId === mail.id, unread: mail.unread }]"
         @click="$emit('select', mail.id)"
       >
-        <el-avatar class="avatar" :size="40" :style="{ background: mail.color }">{{
+        <el-avatar class="avatar" :size="40" :style="{ background: getAvatarColor(mail.initials) }">{{
           mail.initials
         }}</el-avatar>
         <span class="mail-summary">
@@ -122,6 +122,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Mail } from '@/types/mail'
+import { getAvatarColor } from '@/utils/avatar'
 
 const { t } = useI18n()
 
@@ -284,7 +285,7 @@ function handleFilterVisibleChange(visible: boolean) {
   flex: 0 0 40px;
   border-radius: 16px;
   color: var(--app-color-text-on-color);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
 }
 

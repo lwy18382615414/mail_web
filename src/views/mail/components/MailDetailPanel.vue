@@ -67,10 +67,16 @@
       </section>
     </article>
 
+    <section v-else-if="error" class="empty-detail error-detail">
+      <h2>{{ t('mail.load.detailFailed') }}</h2>
+      <p>{{ error }}</p>
+    </section>
+
     <section v-else class="empty-detail">
-      <SvgIcon name="mail-inbox" :size="44" />
-      <h2>{{ error ? t('mail.load.detailFailed') : t('mail.empty.title') }}</h2>
-      <p>{{ error || t('mail.empty.description') }}</p>
+      <AppEmptyState
+        :title="t('mail.empty.title')"
+        :description="t('mail.empty.description')"
+      />
     </section>
   </main>
 </template>
@@ -370,13 +376,12 @@ const toolbarActions = computed<ToolbarAction[]>(() => {
   display: grid;
   height: 100%;
   place-content: center;
-  color: var(--app-color-text-placeholder);
   text-align: center;
 
-  .svg-icon {
-    margin: 0 auto 12px;
-    color: var(--app-color-brand);
+  &.error-detail {
+    color: var(--app-color-text-placeholder);
   }
+
   h2 {
     margin: 0;
     color: var(--app-color-text-primary);

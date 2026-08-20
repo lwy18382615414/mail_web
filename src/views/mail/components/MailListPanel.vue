@@ -82,9 +82,10 @@
 
     <div v-loading="loading" class="mail-list">
       <el-empty v-if="error" :description="error" />
-      <el-empty
+      <AppEmptyState
         v-else-if="!loading && displayedMails.length === 0"
-        :description="t('mail.empty.list')"
+        class="mail-list-empty"
+        :title="t('mail.empty.list')"
       />
       <div
         v-for="mail in displayedMails"
@@ -272,6 +273,10 @@ function handleFilterVisibleChange(visible: boolean) {
   height: calc(100% - 56px);
   padding: 16px;
   overflow-y: auto;
+}
+
+.mail-list-empty {
+  margin: max(48px, 20vh) auto 0;
 }
 
 .mail-item {

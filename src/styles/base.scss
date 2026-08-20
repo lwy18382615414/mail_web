@@ -1,0 +1,79 @@
+@property --app-scrollbar-thumb {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
+* {
+  --app-scrollbar-thumb: transparent;
+
+  box-sizing: border-box;
+  transition: --app-scrollbar-thumb 160ms ease;
+}
+
+*:hover {
+  --app-scrollbar-thumb: #d1d5da;
+}
+
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-color: var(--app-scrollbar-thumb) transparent;
+    scrollbar-width: thin;
+  }
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-right: 2px solid transparent;
+  border-radius: 6px;
+  background-color: var(--app-scrollbar-thumb);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #8c929a;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 0;
+  overflow-x: hidden;
+  color: var(--app-color-text-primary);
+  background: var(--app-color-bg-page);
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+
+.page {
+  min-height: 100%;
+  padding: 24px;
+}
+
+.page h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}

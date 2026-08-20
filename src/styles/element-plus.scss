@@ -1,0 +1,32 @@
+:root {
+  --el-color-primary: var(--app-color-brand);
+  --el-color-primary-light-3: var(--app-color-brand-400);
+  --el-color-primary-light-5: var(--app-color-brand-300);
+  --el-color-primary-light-7: var(--app-color-brand-200);
+  --el-color-primary-light-8: var(--app-color-brand-100);
+  --el-color-primary-light-9: var(--app-color-brand-50);
+  --el-color-primary-dark-2: var(--app-color-brand-hover);
+
+  --el-color-success: var(--app-color-success);
+  --el-color-warning: var(--app-color-warning);
+  --el-color-danger: var(--app-color-danger);
+  --el-color-error: var(--app-color-danger);
+  --el-color-info: var(--app-color-info);
+
+  --el-text-color-primary: var(--app-color-text-primary);
+  --el-text-color-regular: var(--app-color-text-secondary);
+  --el-text-color-secondary: var(--app-color-text-secondary);
+  --el-text-color-placeholder: var(--app-color-text-placeholder);
+  --el-text-color-disabled: var(--app-color-text-disabled);
+  --el-border-color: var(--app-color-border);
+  --el-border-color-light: var(--app-color-border);
+  --el-border-color-lighter: var(--app-color-bg-hover);
+  --el-border-color-extra-light: var(--app-color-bg-muted);
+  --el-fill-color-light: var(--app-color-bg-hover);
+  --el-fill-color-lighter: var(--app-color-bg-muted);
+  --el-fill-color-extra-light: var(--app-color-bg-page);
+  --el-fill-color-blank: var(--app-color-bg-surface);
+  --el-bg-color: var(--app-color-bg-surface);
+  --el-bg-color-page: var(--app-color-bg-page);
+  --el-bg-color-overlay: var(--app-color-bg-surface);
+}

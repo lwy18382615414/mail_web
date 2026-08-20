@@ -1,0 +1,465 @@
+<template>
+  <main class="mail-detail">
+    <header class="detail-toolbar">
+      <div class="toolbar-group">
+        <div class="toolbar-action danger" tabindex="0">
+          <SvgIcon name="mail-delete" :size="24" />
+          <span>{{ t('mail.actions.delete') }}</span>
+        </div>
+        <div class="toolbar-action" tabindex="0">
+          <SvgIcon name="mail-spam" :size="24" />
+          <span>{{ t('mail.actions.reject') }}</span>
+        </div>
+        <i class="toolbar-divider" aria-hidden="true"></i>
+        <div class="toolbar-action" tabindex="0">
+          <SvgIcon name="mail-reply" :size="24" />
+          <span>{{ t('mail.actions.reply') }}</span>
+        </div>
+        <div class="toolbar-action" tabindex="0">
+          <SvgIcon name="mail-reply-all" :size="24" />
+          <span>{{ t('mail.actions.replyAll') }}</span>
+        </div>
+        <div class="toolbar-action" tabindex="0">
+          <SvgIcon name="mail-forward" :size="24" />
+          <span>{{ t('mail.actions.forward') }}</span>
+        </div>
+      </div>
+      <div class="toolbar-action more-button" tabindex="0" :title="t('mail.actions.more')">
+        <SvgIcon name="mail-more" :size="24" />
+      </div>
+    </header>
+
+    <article v-if="mail" class="message">
+      <header class="message-title">
+        <div>
+          <h2>{{ mail.subject }}</h2>
+          <el-tag v-if="mail.external" class="external-badge" effect="plain"
+            ><i></i>{{ t('mail.tags.external') }}</el-tag
+          >
+        </div>
+        <el-button link :title="t('mail.actions.star')"
+          ><SvgIcon name="mail-star" :size="24"
+        /></el-button>
+      </header>
+
+      <section class="sender-card">
+        <div class="sender-profile">
+          <el-avatar class="sender-avatar" :size="48" :style="{ background: mail.color }">{{
+            mail.initials
+          }}</el-avatar>
+          <div>
+            <p>
+              <strong>{{ mail.sender }}</strong> <span>&lt;{{ mail.email }}&gt;</span>
+            </p>
+            <p class="recipient">
+              {{ t('mail.detail.to') }}: <b>{{ mail.recipient }}</b>
+              <SvgIcon name="mail-chevron" :size="13" />
+            </p>
+          </div>
+        </div>
+        <div class="message-date">
+          <time>{{ mail.date }}</time
+          ><el-button link type="primary">{{ t('mail.detail.details') }}</el-button>
+        </div>
+      </section>
+
+      <section class="receipt-notice">
+        <p><SvgIcon name="mail-receipt" :size="24" />{{ t('mail.receipt.prompt') }}</p>
+        <div>
+          <el-button link>{{ t('mail.receipt.decline') }}</el-button
+          ><el-button link type="primary">{{ t('mail.receipt.send') }}</el-button>
+        </div>
+      </section>
+
+      <section class="message-body">
+        <p><strong>Dear friends,</strong></p>
+        <p>
+          I am highly excited to announce that my personal contemporary art exhibition
+          <strong>"Boundaries and Flow"</strong> will officially open next Saturday!
+        </p>
+        <p>
+          This exhibition will feature 24 artworks created over the past two years, covering a
+          diverse range of mediums including oil paintings, installation art, and digital media. The
+          exhibition attempts to deeply explore the intricate relationship between body, space, and
+          memory.
+        </p>
+
+        <ul class="event-details">
+          <li>
+            <span class="detail-icon blue"><SvgIcon name="mail-clock" :size="18" /></span
+            ><strong>Opening Time:</strong> June 28 (Saturday) 15:00
+          </li>
+          <li>
+            <span class="detail-icon red"><SvgIcon name="mail-location" :size="18" /></span
+            ><strong>Location:</strong> ArtSpace Gallery, 188 Binjiang Road
+          </li>
+          <li>
+            <span class="detail-icon violet"><SvgIcon name="mail-glass" :size="18" /></span
+            ><strong>Details:</strong> Refreshments and light drinks will be provided on-site
+          </li>
+        </ul>
+
+        <p>
+          You are cordially invited to attend the exhibition, and you are more than welcome to bring
+          friends along. Please reply to this email to confirm your attendance, so that we can
+          prepare accordingly.
+        </p>
+        <p>Looking forward to meeting you in the art!</p>
+        <div class="signature">
+          <strong>Best regards,</strong>
+          <b>{{ mail.sender }}</b>
+          <span>Independent Artist · ArtSpace</span>
+        </div>
+      </section>
+    </article>
+
+    <section v-else class="empty-detail">
+      <SvgIcon name="mail-inbox" :size="44" />
+      <h2>{{ t('mail.empty.title') }}</h2>
+      <p>{{ t('mail.empty.description') }}</p>
+    </section>
+  </main>
+</template>
+
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import type { Mail } from '@/types/mail'
+
+const { t } = useI18n()
+
+defineProps<{
+  mail?: Mail
+}>()
+</script>
+
+<style scoped lang="scss">
+.mail-detail {
+  grid-row: 2;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--app-color-bg-surface);
+}
+
+.detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--app-color-border);
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.toolbar-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--app-color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    color: var(--app-color-text-strong);
+  }
+
+  &:focus-visible {
+    border-radius: 4px;
+    outline: 2px solid var(--app-color-brand);
+    outline-offset: 4px;
+  }
+
+  &.danger {
+    color: var(--app-color-danger);
+  }
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  margin: 0 8px;
+  background: var(--app-color-border);
+}
+
+.more-button {
+  display: grid;
+  place-items: center;
+  color: var(--app-color-text-secondary);
+}
+
+.message {
+  height: calc(100% - 72px);
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.message-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 10px 0;
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(20px, 1.36vw, 26px);
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+
+  > button {
+    flex: 0 0 auto;
+    padding: 0;
+    color: var(--app-color-warning);
+  }
+}
+
+.external-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  height: 27px;
+  padding: 0 11px;
+  border: 1px solid var(--app-color-border);
+  border-radius: 6px;
+  color: var(--app-color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--app-color-warning);
+  }
+}
+
+.sender-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.sender-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sender-profile p {
+  margin: 0;
+}
+
+.sender-profile strong {
+  font-size: 16px;
+}
+
+.sender-profile p span {
+  color: var(--app-color-text-secondary);
+  font-size: 13px;
+}
+
+.sender-avatar {
+  border-radius: 16px;
+  color: var(--app-color-text-on-color);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.recipient {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 4px;
+  color: var(--app-color-text-secondary);
+  font-size: 13px;
+
+  b {
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: var(--app-color-text-primary);
+    background: var(--app-color-bg-hover);
+    font-weight: 500;
+  }
+}
+
+.message-date {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  color: var(--app-color-text-secondary);
+  font-size: 14px;
+
+  .el-button {
+    padding: 6px 0 0;
+    font-size: 13px;
+  }
+}
+
+.receipt-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 54px;
+  margin-top: 16px;
+  padding: 12px 17px;
+  border: 1px solid var(--app-color-info-border);
+  border-radius: 8px;
+  background: var(--app-color-info-subtle);
+
+  p,
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  p {
+    gap: 4px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  div {
+    gap: 32px;
+  }
+
+  .el-button {
+    padding: 0;
+    color: var(--app-color-text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .el-button--primary {
+    color: var(--app-color-brand);
+  }
+}
+
+.message-body {
+  padding-top: 16px;
+  font-size: 15px;
+  line-height: 1.625;
+}
+
+.message-body p {
+  margin: 0 0 8px;
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+  padding: 24px;
+  border-radius: 8px;
+  background: var(--app-color-bg-muted);
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.detail-icon {
+  display: grid;
+  flex: 0 0 32px;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: 4px;
+  border-radius: 50%;
+
+  // color-audit: allow-content-start
+  &.blue {
+    color: #2563eb;
+    background: #dbeafe;
+  }
+  &.red {
+    color: #dc2626;
+    background: #fee2e2;
+  }
+  &.violet {
+    color: #7c3aed;
+    background: #f3e8ff;
+  }
+  // color-audit: allow-content-end
+}
+
+.signature {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+
+  > strong {
+    font-size: 15px;
+  }
+  > b {
+    padding-top: 4px;
+    color: var(--app-color-text-strong);
+    font-family: Georgia, serif;
+    font-size: 18px;
+    line-height: 28px;
+  }
+  > span {
+    padding-top: 4px;
+    color: var(--app-color-text-secondary);
+    font-size: 13px;
+  }
+}
+
+.empty-detail {
+  display: grid;
+  height: calc(100% - 72px);
+  place-content: center;
+  color: var(--app-color-text-placeholder);
+  text-align: center;
+
+  .svg-icon {
+    margin: 0 auto 12px;
+    color: var(--app-color-brand);
+  }
+  h2 {
+    margin: 0;
+    color: var(--app-color-text-primary);
+    font-size: 20px;
+  }
+  p {
+    margin: 8px 0 0;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .toolbar-group {
+    gap: 14px;
+
+    .toolbar-action span {
+      display: none;
+    }
+  }
+
+  .message {
+    padding: 28px;
+  }
+}
+</style>
